@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-a5084582dffb4c6383c48ee9d46b44afc1c26de0.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\8.3.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="01a90bbb9495a8bbf6f3cfdf12f1b35caaa9524b">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-c9bb00773578535fafd4e63e0d421aba8b1b48c9.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.firebase\firebase-client-jvm\2.3.1\4d53b7d6983247af02b8fe7e4228fff555a5e828\firebase-client-jvm-2.3.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4d53b7d6983247af02b8fe7e4228fff555a5e828">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\firebase-client-jvm-2.3.1-4447663df130da72fc1fa99fcc6d06409267933b.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth\8.3.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="fd76d95678a6b2b8a49bb8a9fb5bcef7aedb70e7">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-6a15b232d6044120fc992fade6daf7f499e815aa.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-databind\2.2.2\3c8f6018eaa72d43b261181e801e6f8676c16ef6\jackson-databind-2.2.2.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3c8f6018eaa72d43b261181e801e6f8676c16ef6">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\jackson-databind-2.2.2-a25244955b73e21a97d68b5694122828efdcb908.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.android.support\design\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-cd0ad5a067e45f923f3764850f23420ee9aaa228.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-core\2.2.2\d20be6a5ddd6f8cfd36ebf6dea329873a1c41f1b\jackson-core-2.2.2.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d20be6a5ddd6f8cfd36ebf6dea329873a1c41f1b">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\jackson-core-2.2.2-4f2f5f14558c3efd892fc5a5d58d8c09fe123ec9.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-annotations\2.2.2\285cb9c666f0f0f3dd8a1be04e1f457eb7b15113\jackson-annotations-2.2.2.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="285cb9c666f0f0f3dd8a1be04e1f457eb7b15113">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\jackson-annotations-2.2.2-c527e76b376de600049a16dfce325c72f7249e84.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-safetynet\8.3.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ea34579b1be157cd792376362157e9c54ebb4cd7">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-a3cfdacba3678bd9f984b3e9e7e13c9aa5db7476.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-cbdd2b99cb74a1ff883d05a49e2258dcf0f68440.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.firebase\tubesock\0.0.11\d37cb67277928cf59344b4196af8d9cee1f1a27c\tubesock-0.0.11.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d37cb67277928cf59344b4196af8d9cee1f1a27c">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\tubesock-0.0.11-e71f77b413fb4c83d2fe34305ddad12e76ad1af9.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1-e4606a207c730f93ee0d287f6e191ab934597343.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1-62bb7b17b382e349ca3df96a7e5f0deba38c9e36.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\.gradle\caches\modules-2\files-2.1\com.firebase\firebase-client-android\2.3.1\be29b24233711c419ce935aa0a1b12ebc49d1c9a\firebase-client-android-2.3.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="be29b24233711c419ce935aa0a1b12ebc49d1c9a">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\firebase-client-android-2.3.1-b2c92d7454e939936c1cad648d33b92d1652a5db.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="39ae02ce40c3ac828abbf780ce0ff5d7a28b7d6a">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-c111faa208c82ca28c892e00fa74433344a83601.jar" />
+    </item>
+    <item
+        jar="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.3.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="345a1b5cf5b144ce18ba6962bc66a7e2f26c1c1b">
+        <dex dex="C:\Users\wiley.shi\Desktop\ShoppingListPlusPlus-1.00_version_0.1_start_code\app\build\intermediates\pre-dexed\debug\classes-a848a505436929f9c6454364befb73cdcdf85f5e.jar" />
+    </item>
+
+</items>
