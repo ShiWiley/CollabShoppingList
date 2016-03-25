@@ -1,6 +1,7 @@
 package com.udacity.firebase.shoppinglistplusplus.ui;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.udacity.firebase.shoppinglistplusplus.R;
+import com.udacity.firebase.shoppinglistplusplus.ui.activeListDetails.ActiveListDetailsActivity;
 import com.udacity.firebase.shoppinglistplusplus.ui.activeLists.AddListDialogFragment;
 import com.udacity.firebase.shoppinglistplusplus.ui.activeLists.ShoppingListsFragment;
 import com.udacity.firebase.shoppinglistplusplus.ui.meals.AddMealDialogFragment;
@@ -163,4 +166,10 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
+    //public void onTextViewListNameClick(View view){
+    //    Log.e("clicked", "clicked:");
+    //    Intent myIntent = new Intent(MainActivity.this, ActiveListDetailsActivity.class);
+    //    MainActivity.this.startActivity(myIntent);
+    //}
 }

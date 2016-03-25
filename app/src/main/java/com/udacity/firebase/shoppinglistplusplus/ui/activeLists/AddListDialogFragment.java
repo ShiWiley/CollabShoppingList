@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,13 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.ServerValue;
 import com.udacity.firebase.shoppinglistplusplus.R;
+import com.udacity.firebase.shoppinglistplusplus.model.ShoppingList;
+import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
+
+import java.util.HashMap;
 
 /**
  * Adds a new shopping list
@@ -89,7 +96,17 @@ public class AddListDialogFragment extends DialogFragment {
      * Add new active list
      */
     public void addShoppingList() {
-
+        //Get reference to the root node in Firebase
+        Firebase ref = new Firebase(Constants.FIREBASE_URL);
+        //Get the string that the user entered into the EditText and make an object with it
+        //Use anonymous Owner for the owner for now since there is no user accounts yet
+        String userEnteredName = mEditTextListName.getText().toString();
+        String owner = "Anonymous Owner";
+        HashMap<String, Object> timeStamp = new HashMap<String, Object>();
+        timeStamp.put("date", ServerValue.TIMESTAMP);
+        ShoppingList shoppingList = new ShoppingList(userEnteredName, owner, timeStamp);
+        ref.child("activeList").setValue(shoppingList);
+        //ref.child("listName").setValue(userEnteredName);
     }
 
 }
