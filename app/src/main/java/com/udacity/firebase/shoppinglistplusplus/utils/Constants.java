@@ -12,25 +12,34 @@ public final class Constants {
      * where active lists are stored (ie "activeLists")
      */
 
+    public static final String FIREBASE_LOCATION_ACTIVE_LIST = "activeList";
+    public static final String FIREBASE_LOCATION_ACTIVE_LISTS = "activeLists";
+    public static final String FIRBASE_LOCATION_SHOPPING_LIST_ITEMS = "shoppingListItems";
 
     /**
      * Constants for Firebase object properties
      */
     public static final String FIREBASE_PROPERTY_LIST_NAME = "listName";
     public static final String FIREBASE_PROPERTY_TIMESTAMP = "timestamp";
-    public static final String FIREBASE_LOCATION_ACTIVE_LIST = "activeList";
+    public static final String FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED = "timestampLastChanged";
+    public static final String FIRBASE_PROPERTY_ITEM_NAME = "itemName";
+
 
     /**
      * Constants for Firebase URL
      */
     //located in gradle.properties file
     public static final String FIREBASE_URL = BuildConfig.UNIQUE_FIREBASE_ROOT_URL;
-    public static final String FIREBASE_URL_ACTIVE_LIST = FIREBASE_URL + "/" + FIREBASE_LOCATION_ACTIVE_LIST;
+    public static final String FIREBASE_URL_ACTIVE_LIST = FIREBASE_URL + "/"  + FIREBASE_LOCATION_ACTIVE_LIST;
+    public static final String FIREBASE_URL_ACTIVE_LISTS = FIREBASE_URL + "/" + FIREBASE_LOCATION_ACTIVE_LISTS;
+    public static final String FIREBASE_URL_SHOPPING_LIST_ITEMS = FIREBASE_URL + "/" + FIRBASE_LOCATION_SHOPPING_LIST_ITEMS;
 
 
     /**
      * Constants for bundles, extras and shared preferences keys
      */
+    public static final String KEY_LIST_ID = "LIST_ID";
+    public static final String KEY_LIST_NAME = "LIST_NAME";
     public static final String KEY_LAYOUT_RESOURCE = "LAYOUT_RESOURCE";
 
 }

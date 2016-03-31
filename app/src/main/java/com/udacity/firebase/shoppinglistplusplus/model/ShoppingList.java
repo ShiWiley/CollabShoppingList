@@ -2,6 +2,9 @@ package com.udacity.firebase.shoppinglistplusplus.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.udacity.firebase.shoppinglistplusplus.utils.Utils;
+import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
+import com.firebase.client.ServerValue;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,17 +14,69 @@ import java.util.Objects;
  * Created by wileyshi on 3/24/16.
  */
 public class ShoppingList {
+
     private String listName;
     private String owner;
-    private HashMap<String,Object> timeStamp;
+    private HashMap<String, Object> timestampLastChanged;
+    private HashMap<String, Object> timestampCreated;
+
+    /**
+     * Required public constructor
+     */
+    public ShoppingList() {
+    }
+
+    public ShoppingList(String listName, String owner, HashMap<String, Object> timestampCreated) {
+        this.listName = listName;
+        this.owner = owner;
+        //HashMap<String, Object> timestampLastChangedObj = new HashMap<String, Object>();
+        //timestampLastChangedObj.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+        //this.timestampLastChanged = timestampLastChangedObj;
+        //this.timestampCreated = timestampLastChangedObj;
+        this.timestampCreated = timestampCreated;
+        HashMap<String, Object> timestampNowObject = new HashMap<String, Object>();
+        timestampNowObject.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+        this.timestampLastChanged = timestampNowObject;
+
+    }
+
+    public String getListName() {
+        return listName;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public HashMap<String, Object> getTimestampLastChanged() {
+        return timestampLastChanged;
+    }
+
+    public HashMap<String, Object> getTimestampCreated() {
+        return timestampLastChanged;
+    }
+
+
+    @JsonIgnore
+    public long getTimestampLastChangedLong() {
+        return (long) timestampLastChanged.get(Constants.FIREBASE_PROPERTY_TIMESTAMP);
+    }
+
+    @JsonIgnore
+    public long getTimestampCreatedLong() {
+        return (long) timestampCreated.get(Constants.FIREBASE_PROPERTY_TIMESTAMP);
+    }
+    /*private String listName;
+    private String owner;
+    private HashMap<String,Object> timestampLastChanged;
 
     public ShoppingList() {
     }
 
-    public ShoppingList(String name, String owner, HashMap<String,Object> timeStamp) {
+    public ShoppingList(String name, String owner, HashMap<String,Object> timestampLastChanged) {
         this.owner = owner;
         this.listName = name;
-        this.timeStamp = timeStamp;
+        this.timestampLastChanged = timestampLastChanged;
     }
 
     public String getListName() {
@@ -33,7 +88,7 @@ public class ShoppingList {
     }
 
     public Map<String, Object> getTimeStamp(){
-        return timeStamp;
+        return timestampLastChanged;
     }
 
     public void setListName(String listName) {
@@ -46,7 +101,6 @@ public class ShoppingList {
 
     @JsonIgnore
     public String getTimeStampString(){
+        return Utils.SIMPLE_DATE_FORMAT.format(timestampLastChanged.get("timestamp")).toString();}*/
 
-        return Utils.SIMPLE_DATE_FORMAT.format(timeStamp.get("date")).toString();
-    }
 }

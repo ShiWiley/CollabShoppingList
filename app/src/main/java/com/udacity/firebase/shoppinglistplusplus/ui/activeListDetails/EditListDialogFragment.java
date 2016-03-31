@@ -23,6 +23,7 @@ import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
 public abstract class EditListDialogFragment extends DialogFragment {
     EditText mEditTextForList;
     int mResource;
+    String mListId;
 
     /**
      * Helper method that creates a basic bundle of all of the information needed to change
@@ -32,8 +33,9 @@ public abstract class EditListDialogFragment extends DialogFragment {
      * @param resource
      * @return
      */
-    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource) {
+    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId) {
         Bundle bundle = new Bundle();
+        bundle.putString(Constants.KEY_LIST_ID, listId);
         bundle.putInt(Constants.KEY_LAYOUT_RESOURCE, resource);
         return bundle;
     }
@@ -44,6 +46,7 @@ public abstract class EditListDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mListId = getArguments().getString(Constants.KEY_LIST_ID);
         mResource = getArguments().getInt(Constants.KEY_LAYOUT_RESOURCE);
     }
 
