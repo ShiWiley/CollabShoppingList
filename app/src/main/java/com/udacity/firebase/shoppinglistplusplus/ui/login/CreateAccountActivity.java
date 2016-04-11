@@ -3,6 +3,7 @@ package com.udacity.firebase.shoppinglistplusplus.ui.login;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -12,13 +13,20 @@ import android.widget.LinearLayout;
 import android. widget.Toast;
 
 import com.fasterxml.jackson.databind.deser.Deserializers;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ServerValue;
+import com.firebase.client.ValueEventListener;
 import com.udacity.firebase.shoppinglistplusplus.R;
+import com.udacity.firebase.shoppinglistplusplus.model.User;
 import com.udacity.firebase.shoppinglistplusplus.ui.BaseActivity;
 import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
+import com.udacity.firebase.shoppinglistplusplus.utils.Utils;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by wileyshi on 3/31/16.
@@ -98,8 +106,14 @@ public class CreateAccountActivity extends BaseActivity {
         mFirebaseRef.createUser(mUserEmail,mPassword,new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
+                //dismiss the progress dialog
                 mAuthProgressDialog.dismiss();
                 Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
+
+                //User POJO to create user data - old version
+                //String uid = (String) result.get("uid");
+                //createUserInFirebaseHelper(uid);
+                createUserInFirebaseHelper();
             }
 
             @Override
@@ -120,8 +134,55 @@ public class CreateAccountActivity extends BaseActivity {
     }
 
     //create new account using Firebase email / password provider
-    public void createUserInFirebaseHelper(final String encodedEmail) {
+    //Stores key to an uid
+    public void createUserInFirebaseHelper(String uid) {
+        final Firebase userLocation = new Firebase(Constants.FIREBASE_URL_USERS).child(uid);
 
+        //check if there is already a user
+        userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //if there is no user make one
+                if(dataSnapshot.getValue() == null) {
+                    //set raw version of date to ServerValue.TimeStamp and save into dateCreatedMap
+                    HashMap<String, Object> timestampJoined = new HashMap<String, Object>();
+                    timestampJoined.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+                    User newUser = new User(mUserName, mUserEmail, timestampJoined);
+                    userLocation.setValue(newUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(LOG_TAG, getString(R.string.log_error_occurred));
+            }
+        });
+    }
+    //Stores the key to a encoded email
+    public void createUserInFirebaseHelper(){
+        final String encodedEmail = Utils.encodeEmail(mUserEmail);
+        final Firebase userLocation = new Firebase(Constants.FIREBASE_URL_USERS).child(encodedEmail);
+        //check if there's already a user (logged in with associated google account)
+        userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //if there is no user make one
+                if(dataSnapshot.getValue() == null) {
+                    //set raw version of dateto servervalue.timestamp and save into dateCreatedMap
+                    HashMap<String, Object> timeStampJoined = new HashMap<String, Object>();
+                    timeStampJoined.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+                    User newUser = new User(mUserName,mUserEmail, timeStampJoined);
+                    userLocation.setValue(newUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(LOG_TAG, "Error occured");
+            }
+        });
     }
 
     private boolean isEmailValid(String email) {
@@ -151,6 +212,7 @@ public class CreateAccountActivity extends BaseActivity {
             mEditTextPasswordCreate.setError(getResources().getString(R.string.error_invalid_password_not_valid));
             return false;
         }
+
         else {
             return true;
         }

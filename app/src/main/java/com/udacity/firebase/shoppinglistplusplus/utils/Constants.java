@@ -15,6 +15,7 @@ public final class Constants {
     public static final String FIREBASE_LOCATION_ACTIVE_LIST = "activeList";
     public static final String FIREBASE_LOCATION_ACTIVE_LISTS = "activeLists";
     public static final String FIRBASE_LOCATION_SHOPPING_LIST_ITEMS = "shoppingListItems";
+    public static final String FIREBASE_LOCATION_USERS = "users";
 
     /**
      * Constants for Firebase object properties
@@ -33,7 +34,7 @@ public final class Constants {
     public static final String FIREBASE_URL_ACTIVE_LIST = FIREBASE_URL + "/"  + FIREBASE_LOCATION_ACTIVE_LIST;
     public static final String FIREBASE_URL_ACTIVE_LISTS = FIREBASE_URL + "/" + FIREBASE_LOCATION_ACTIVE_LISTS;
     public static final String FIREBASE_URL_SHOPPING_LIST_ITEMS = FIREBASE_URL + "/" + FIRBASE_LOCATION_SHOPPING_LIST_ITEMS;
-
+    public static final String FIREBASE_URL_USERS  = FIREBASE_URL + "/" + FIREBASE_LOCATION_USERS;
 
     /**
      * Constants for bundles, extras and shared preferences keys
@@ -41,6 +42,11 @@ public final class Constants {
     public static final String KEY_LIST_ID = "LIST_ID";
     public static final String KEY_LIST_NAME = "LIST_NAME";
     public static final String KEY_LAYOUT_RESOURCE = "LAYOUT_RESOURCE";
+    public static final String KEY_GOOGLE_EMAIL = "GOOGLE_EMAIL";
+
+    //Firebase login
     public static final String PASSWORD_PROVIDER = "password";
+    public static final String GOOGLE_PROVIDER = "google";
+    public static final String PROVIDER_DATA_DISPLAY_NAME = "displayName";
 
 }
