@@ -14,12 +14,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.udacity.firebase.shoppinglistplusplus.R;
+import com.udacity.firebase.shoppinglistplusplus.model.User;
 import com.udacity.firebase.shoppinglistplusplus.ui.activeListDetails.ActiveListDetailsActivity;
 import com.udacity.firebase.shoppinglistplusplus.ui.activeLists.AddListDialogFragment;
 import com.udacity.firebase.shoppinglistplusplus.ui.activeLists.ShoppingListsFragment;
 import com.udacity.firebase.shoppinglistplusplus.ui.meals.AddMealDialogFragment;
 import com.udacity.firebase.shoppinglistplusplus.ui.meals.MealsFragment;
+import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
 
 /**
  * Represents the home screen of the app which
@@ -27,16 +33,41 @@ import com.udacity.firebase.shoppinglistplusplus.ui.meals.MealsFragment;
  */
 public class MainActivity extends BaseActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
+    private Firebase mUserRef;
+    private ValueEventListener mUserRefListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //set firebase reference
+        mUserRef = new Firebase(Constants.FIREBASE_URL_USERS).child(mEncodedEmail);
+
         /**
          * Link layout elements from XML and setup the toolbar
          */
         initializeScreen();
+
+        //Add valueeventlisteners to firebase references to control get data and control behavior and visibility elements
+        mUserRefListener = mUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                //set sctivity title to current user name if user is not null
+                if(user != null) {
+                    //Assumes that the first word in the user's name is the user's first name
+                    String firstName = user.getName().split("\\s+")[0];
+                    String title = firstName + "'s List";
+                    setTitle(title);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(LOG_TAG, getString(R.string.log_error_the_read_failed) + firebaseError.getMessage());
+            }
+        });
     }
 
 
@@ -59,7 +90,6 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
 
@@ -67,6 +97,9 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        //remove listener
+        mUserRef.removeEventListener(mUserRefListener);
     }
 
     /**
@@ -94,7 +127,7 @@ public class MainActivity extends BaseActivity {
      */
     public void showAddListDialog(View view) {
         /* Create an instance of the dialog fragment and show it */
-        DialogFragment dialog = AddListDialogFragment.newInstance();
+        DialogFragment dialog = AddListDialogFragment.newInstance(mEncodedEmail);
         dialog.show(MainActivity.this.getFragmentManager(), "AddListDialogFragment");
     }
 

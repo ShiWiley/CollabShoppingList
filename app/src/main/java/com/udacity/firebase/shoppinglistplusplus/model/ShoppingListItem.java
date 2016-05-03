@@ -4,18 +4,20 @@ package com.udacity.firebase.shoppinglistplusplus.model;
  * Created by wileyshi on 3/30/16.
  */
 public class ShoppingListItem {
-    String itemName;
-    String owner;
-    String Bought;
-    String BoughtBy;
+    private String itemName;
+    private String owner;
+    private String boughtBy;
+    private boolean bought;
 
     public ShoppingListItem() {
 
     }
 
-    public ShoppingListItem(String itemName) {
+    public ShoppingListItem(String itemName,String Owner) {
         this.itemName = itemName;
-        this.owner = "Anonymous Owner";
+        this.owner = Owner;
+        this.boughtBy = null;
+        this.bought = false;
     }
 
     public String getItemName() {
@@ -24,5 +26,13 @@ public class ShoppingListItem {
 
     public String getOwner() {
         return owner;
+    }
+
+    public String getBoughtBy() {
+        return boughtBy;
+    }
+
+    public boolean isBought() {
+        return bought;
     }
 }

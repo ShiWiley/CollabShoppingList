@@ -23,7 +23,7 @@ import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
 public abstract class EditListDialogFragment extends DialogFragment {
     EditText mEditTextForList;
     int mResource;
-    String mListId;
+    String mListId, mOwner, mEncodedEmail;
 
     /**
      * Helper method that creates a basic bundle of all of the information needed to change
@@ -33,10 +33,12 @@ public abstract class EditListDialogFragment extends DialogFragment {
      * @param resource
      * @return
      */
-    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId) {
+    protected static Bundle newInstanceHelper(ShoppingList shoppingList, int resource, String listId, String encodedEmail) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.KEY_LIST_ID, listId);
         bundle.putInt(Constants.KEY_LAYOUT_RESOURCE, resource);
+        bundle.putString(Constants.KEY_LIST_OWNER, shoppingList.getOwner());
+        bundle.putString(Constants.KEY_ENCODED_EMAIL, encodedEmail);
         return bundle;
     }
 

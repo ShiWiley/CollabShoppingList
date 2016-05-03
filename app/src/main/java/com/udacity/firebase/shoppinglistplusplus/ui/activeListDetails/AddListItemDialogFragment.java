@@ -23,10 +23,11 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
     /**
      * Public static constructor that creates fragment and passes a bundle with data into it when adapter is created
      */
-    public static AddListItemDialogFragment newInstance(ShoppingList shoppingList, String listId) {
+    public static AddListItemDialogFragment newInstance(ShoppingList shoppingList, String listId, String encodedEmail) {
         AddListItemDialogFragment addListItemDialogFragment = new AddListItemDialogFragment();
 
-        Bundle bundle = newInstanceHelper(shoppingList, R.layout.dialog_add_item, listId);
+        //Bundle bundle = newInstanceHelper(shoppingList, R.layout.dialog_add_item, listId); --old
+        Bundle bundle = EditListDialogFragment.newInstanceHelper(shoppingList, R.layout.dialog_add_item, listId, encodedEmail);
         addListItemDialogFragment.setArguments(bundle);
 
         return addListItemDialogFragment;
@@ -67,11 +68,11 @@ public class AddListItemDialogFragment extends EditListDialogFragment {
             String itemId = newRef.getKey();
 
             //Make POJO for item and turn it into HashMap
-            ShoppingListItem itemToAddObject = new ShoppingListItem(mItemName);
+            ShoppingListItem itemToAddObject = new ShoppingListItem(mItemName, mEncodedEmail);
             HashMap<String, Object> itemToAdd = (HashMap<String,Object>) new ObjectMapper().convertValue(itemToAddObject, Map.class);
 
             //add the item to the update map
-            updatedItemToAddMap.put("/" + Constants.FIRBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + itemId, itemToAdd);
+            updatedItemToAddMap.put("/" + Constants.FIREBASE_LOCATION_SHOPPING_LIST_ITEMS + "/" + mListId + "/" + itemId, itemToAdd);
 
             //Make timestamp fpr last changed
             HashMap<String, Object> changedTimestampMap = new HashMap<>();

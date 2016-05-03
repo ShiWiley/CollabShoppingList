@@ -95,6 +95,21 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //Check whether sharedpreferneces has an email set for someone trying to signup
+        //if yes display email, clear email from shared preferences
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor spe = sp.edit();
+
+        //Get the newly registered user email if present use null as default value
+        String signupEmail = sp.getString(Constants.KEY_SIGNUP_EMAIL, null);
+
+        //Fill in the email editText and remove value from SharedPreferences if email is present
+        if(signupEmail != null) {
+            mEditTextEmailInput.setText(signupEmail);
+
+            //clear signup email sharedPreferences to make sure that they are used just once
+            spe.putString(Constants.KEY_SIGNUP_EMAIL, null).apply();
+        }
     }
 
     @Override
@@ -183,54 +198,42 @@ public class LoginActivity extends BaseActivity {
             mAuthProgressDialog.dismiss();
             Log.i(LOG_TAG, provider + " " + getString(R.string.log_message_auth_successful));
 
-            if(authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
+
+            //set and store mEncodedEmail in shared preferences when using both google and password provider
+            //store mEncodedEmail in shared prefs and launch the Main Activity.
+            //Everything done to make a user in google or retrieve the mEncodedEmail should be moved to the two helper methods:
+            // setAuthenticatedUserPasswordProvider
+            // setAuthenticatedUserGoogle
+            //if(authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
+            if(authData != null) {
                 //if google api client is connected get the lowerCase user email and save in sharedPrefences
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor spe = sp.edit();
-                String unprocessedEmail;
-                if(mGoogleApiClient.isConnected()) {
-                    unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
-                    spe.putString(Constants.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
+
+                //if user is logged in with google provider
+                if(authData.getProvider().equals(Constants.PASSWORD_PROVIDER)) {
+                    setAuthenticatedUserPasswordProvider(authData);
                 }
                 else {
-                    //otherwise get email from sharedPreferences, use null as default value (user resumes his session)
-                    unprocessedEmail = sp.getString(Constants.KEY_GOOGLE_EMAIL, null);
+                    //if user has logged in with password provider
+                    if (authData.getProvider().equals(Constants.GOOGLE_PROVIDER)) {
+                        setAuthenticatedUserGoogle(authData);
+                    } else {
+                        Log.e(LOG_TAG, getString(R.string.log_error_invalid_provider) + authData.getProvider());
+                    }
                 }
-                //encode user email replacing "." with "," to use as firebase db key
-                mEncodedEmail= Utils.encodeEmail(unprocessedEmail);
 
-                //get username from authData
-                final String userName = (String) authData.getProviderData().get(Constants.PROVIDER_DATA_DISPLAY_NAME);
+                //save provider name and encodedEmail for later use and start MainActivity
+                spe.putString(Constants.KEY_PROVIDER, authData.getProvider()).apply();
+                spe.putString(Constants.KEY_ENCODED_EMAIL, mEncodedEmail).apply();
 
-                //If user doesnt exist make new user
-                final Firebase userLocation = new Firebase(Constants.FIREBASE_URL_USERS).child(mEncodedEmail);
-                userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //if nothing is there
-                        if(dataSnapshot.getValue() == null) {
-                            HashMap<String, Object> timestampJoined = new HashMap<String, Object>();
-                            timestampJoined.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
-
-                            User newUser = new User(userName, mEncodedEmail, timestampJoined);
-                            userLocation.setValue(newUser);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        Log.d(LOG_TAG, getString(R.string.log_error_occurred) + firebaseError.getMessage());
-                    }
-                });
-            }
-
-            if(authData != null) {
                 //go to main activity
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             }
+
         }
 
         @Override
@@ -266,6 +269,47 @@ public class LoginActivity extends BaseActivity {
      * @param authData AuthData object returned from onAuthenticated
      */
     private void setAuthenticatedUserPasswordProvider(AuthData authData) {
+        final String unprocessedEmail = authData.getProviderData().get(Constants.FIREBASE_PROPERTY_EMAIL).toString().toLowerCase();
+        //encode user email replacing "." with "," to use as a FIrebase key
+        mEncodedEmail = Utils.encodeEmail(unprocessedEmail);
+
+        final Firebase userRef = new Firebase(Constants.FIREBASE_URL_USERS).child(mEncodedEmail);
+
+        //Check if current user has logged in at least once
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                if(user != null) {
+                    //if recently registered user has hasLoggedinWithPassword = "false"
+                    //never logged in using password provider
+                    if(!user.isHasLoggedInWithPassword()) {
+                        //change passwird if user that just signed in signed up recently
+                        //to make sure that user will be able to use temp password from email
+                        //more than 24 hours
+                        mFirebaseRef.changePassword(unprocessedEmail, mEditTextPasswordInput.getText().toString(), mEditTextPasswordInput.getText().toString(), new Firebase.ResultHandler() {
+                            @Override
+                            public void onSuccess() {
+                                userRef.child(Constants.FIREBASE_PROPERTY_USER_HAS_LOGGED_IN_WITH_PASSWORD).setValue(true);
+                                //password was changed
+                                Log.d(LOG_TAG, getString(R.string.log_message_password_changed_successfully) + mEditTextPasswordInput.getText().toString());
+                            }
+
+                            @Override
+                            public void onError(FirebaseError firebaseError) {
+                                Log.d(LOG_TAG, getString(R.string.log_error_failed_to_change_password) + firebaseError.getMessage());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(LOG_TAG, getString(R.string.log_error_the_read_failed) + firebaseError.getMessage());
+            }
+        });
     }
 
     /**
@@ -274,7 +318,43 @@ public class LoginActivity extends BaseActivity {
      * @param authData AuthData object returned from onAuthenticated
      */
     private void setAuthenticatedUserGoogle(AuthData authData){
+        //if google api client is connected, get the lowerCase user email and save in sharedPreferences
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor spe = sp.edit();
+        String unprocessedEmail;
+        if(mGoogleApiClient.isConnected()) {
+            unprocessedEmail = mGoogleAccount.getEmail().toLowerCase();
+            spe.putString(Constants.KEY_GOOGLE_EMAIL, unprocessedEmail).apply();
+        }
+        else {
+            //otherwise get email from sharedPreferences, use null as default value (user resumed his session)
+            unprocessedEmail = sp.getString(Constants.KEY_GOOGLE_EMAIL, null);
+        }
+        //Encoded user email replacing "." with "," to be able to use it as a Firebase db key
+        mEncodedEmail = Utils.encodeEmail(unprocessedEmail);
+        //Get username from authData
+        final String userName = (String) authData.getProviderData().get(Constants.PROVIDER_DATA_DISPLAY_NAME);
 
+        //Get username from authData
+        final Firebase userLocation = new Firebase(Constants.FIREBASE_URL_USERS).child(mEncodedEmail);
+        userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //if nothing is there
+                if(dataSnapshot.getValue() == null) {
+                    HashMap<String,Object> timestampJoined = new HashMap<String, Object>();
+                    timestampJoined.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
+
+                    User newUser = new User(userName, mEncodedEmail, timestampJoined);
+                    userLocation.setValue(newUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(LOG_TAG, getString(R.string.log_error_occurred) + firebaseError.getMessage());
+            }
+        });
     }
 
     /**

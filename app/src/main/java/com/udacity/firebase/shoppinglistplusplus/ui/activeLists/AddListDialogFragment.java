@@ -28,14 +28,16 @@ import java.util.HashMap;
  */
 public class AddListDialogFragment extends EditListDialogFragment {
     EditText mEditTextListName;
+    String mEncodedEmail;
 
     /**
      * Public static constructor that creates fragment and
      * passes a bundle with data into it when adapter is created
      */
-    public static AddListDialogFragment newInstance() {
+    public static AddListDialogFragment newInstance(String encodedEmail) {
         AddListDialogFragment addListDialogFragment = new AddListDialogFragment();
         Bundle bundle = new Bundle();
+        bundle.putString(Constants.KEY_ENCODED_EMAIL, encodedEmail);
         addListDialogFragment.setArguments(bundle);
         return addListDialogFragment;
     }
@@ -46,6 +48,7 @@ public class AddListDialogFragment extends EditListDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mEncodedEmail = getArguments().getString(Constants.KEY_ENCODED_EMAIL);
     }
 
     /**
@@ -101,7 +104,7 @@ public class AddListDialogFragment extends EditListDialogFragment {
         // Get the string that the user entered into the EditText and make an object with it
         // We'll use "Anonymous Owner" for the owner because we don't have user accounts yet
         String userEnteredName = mEditTextListName.getText().toString();
-        String owner = "Anonymous Owner";
+        //String owner = "Anonymous Owner";
         //ShoppingList currentList = new ShoppingList(userEnteredName, owner);
 
         // Go to the "activeList" child node of the root node.
@@ -125,7 +128,7 @@ public class AddListDialogFragment extends EditListDialogFragment {
             timestampCreated.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
             //Build shopping list
-            ShoppingList shoppingList = new ShoppingList(userEnteredName, owner, timestampCreated);
+            ShoppingList shoppingList = new ShoppingList(userEnteredName, mEncodedEmail, timestampCreated);
 
             //add shopping list value
             newListRef.setValue(shoppingList);

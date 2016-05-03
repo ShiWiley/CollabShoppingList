@@ -17,7 +17,7 @@
         style="@style/ListItemText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="setOnItemClickListener"/>
+        />
 
     <TextView
         android:id="@+id/created_by"

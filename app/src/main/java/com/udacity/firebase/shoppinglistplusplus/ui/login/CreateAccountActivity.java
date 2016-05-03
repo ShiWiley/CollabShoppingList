@@ -2,7 +2,9 @@ package com.udacity.firebase.shoppinglistplusplus.ui.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.LoginFilter;
 import android.util.Log;
 import android.util.Patterns;
@@ -24,6 +26,8 @@ import com.udacity.firebase.shoppinglistplusplus.ui.BaseActivity;
 import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
 import com.udacity.firebase.shoppinglistplusplus.utils.Utils;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,9 +40,10 @@ import java.util.Objects;
 public class CreateAccountActivity extends BaseActivity {
     private static final String LOG_TAG = CreateAccountActivity.class.getSimpleName();
     private ProgressDialog mAuthProgressDialog;
-    private EditText mEditTextUsernameCreate, mEditTextEmailCreate, mEditTextPasswordCreate;
+    private EditText mEditTextUsernameCreate, mEditTextEmailCreate;
     private Firebase mFirebaseRef;
     private String mUserName, mUserEmail,mPassword;
+    private SecureRandom mRandom = new SecureRandom();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +68,13 @@ public class CreateAccountActivity extends BaseActivity {
     public void initializeScreen() {
         mEditTextUsernameCreate = (EditText) findViewById(R.id.edit_text_username_create);
         mEditTextEmailCreate = (EditText) findViewById(R.id.edit_text_email_create);
-        mEditTextPasswordCreate = (EditText) findViewById(R.id.edit_text_password_create);
         LinearLayout linearLayoutCreateAccountActivity = (LinearLayout) findViewById(R.id.linear_layout_create_account_activity);
         initializeBackground(linearLayoutCreateAccountActivity);
 
         //setup the profress dialog that is displayed later when authenticating with Firebase
         mAuthProgressDialog = new ProgressDialog(this);
         mAuthProgressDialog.setTitle(getResources().getString(R.string.progress_dialog_loading));
-        mAuthProgressDialog.setMessage(getResources().getString(R.string.progress_dialog_creating_user_with_firebase));
+        mAuthProgressDialog.setMessage(getResources().getString(R.string.progress_dialog_check_inbox));
         mAuthProgressDialog.setCancelable(false);
     }
 
@@ -88,14 +92,13 @@ public class CreateAccountActivity extends BaseActivity {
         //if any of the three values fail a check, stop this method
         mUserName = mEditTextUsernameCreate.getText().toString();
         mUserEmail = mEditTextEmailCreate.getText().toString();
-        mPassword = mEditTextPasswordCreate.getText().toString();
+        mPassword = new BigInteger(130, mRandom).toString(32);
 
         //check email and user name are valid
         boolean validEmail = isEmailValid(mUserEmail);
         boolean validUserName = isUserNameValid(mUserName);
-        boolean validPassword = isPasswordValid(mPassword);
 
-        if(!validEmail || !validPassword || !validUserName) {
+        if(!validEmail || !validUserName) {
             return;
         }
 
@@ -106,14 +109,42 @@ public class CreateAccountActivity extends BaseActivity {
         mFirebaseRef.createUser(mUserEmail,mPassword,new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
-                //dismiss the progress dialog
-                mAuthProgressDialog.dismiss();
-                Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
+                Log.d(LOG_TAG, "Firebase ref " + mFirebaseRef.toString());
+                mFirebaseRef.resetPassword(mUserEmail, new Firebase.ResultHandler(){
+                    @Override
+                    public void onSuccess() {
+                        mAuthProgressDialog.dismiss();
+                        Log.i(LOG_TAG, getString(R.string.log_message_auth_successful));
 
-                //User POJO to create user data - old version
-                //String uid = (String) result.get("uid");
-                //createUserInFirebaseHelper(uid);
-                createUserInFirebaseHelper();
+                        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(CreateAccountActivity.this);
+                        SharedPreferences.Editor spe = sp.edit();
+
+                        //save name and email to shared preferences to create user database record
+                        //when the refistered user will sign in for the first time
+                        spe.putString(Constants.KEY_SIGNUP_EMAIL, mUserEmail).apply();
+
+                        //Encode user email replacing "." with ","
+                        createUserInFirebaseHelper();
+
+                        //Passwird reset email sent open app chooser to pick app for handling inbox email intent
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_APP_EMAIL);
+                        try {
+                            startActivity(intent);
+                            finish();
+                        } catch (android.content.ActivityNotFoundException e){
+                            //user has no app to handle email
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(FirebaseError firebaseError) {
+                        //Error occured log the error and dismiss the progress dialog
+                        Log.d(LOG_TAG, getString(R.string.log_error_occurred) + firebaseError.getMessage());
+                        mAuthProgressDialog.dismiss();
+                    }
+                });
             }
 
             @Override
@@ -202,17 +233,6 @@ public class CreateAccountActivity extends BaseActivity {
             mEditTextUsernameCreate.setError(getResources().getString(R.string.error_cannot_be_empty));
             return false;
         }
-        else {
-            return true;
-        }
-    }
-
-    private boolean isPasswordValid(String password) {
-        if(password.length() < 6) {
-            mEditTextPasswordCreate.setError(getResources().getString(R.string.error_invalid_password_not_valid));
-            return false;
-        }
-
         else {
             return true;
         }
