@@ -66,14 +66,14 @@ public class EditListNameDialogFragment extends EditListDialogFragment {
 
                 //Make hash map of the specific properties you are changing
                 HashMap<String, Object> updatedProperties = new HashMap<String, Object>();
-                updatedProperties.put(Constants.FIREBASE_PROPERTY_LIST_NAME, inputListName);
+                updatedProperties.put("/" + mListId+ "/" + Constants.FIREBASE_PROPERTY_LIST_NAME, inputListName);
 
                 //add the timestamp for last changed to the updatedProperties HashMap
                 HashMap<String, Object> changedTimestampMap = new HashMap<>();
                 changedTimestampMap.put(Constants.FIREBASE_PROPERTY_TIMESTAMP, ServerValue.TIMESTAMP);
 
                 //add updated timestamp
-                updatedProperties.put(Constants.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTimestampMap);
+                updatedProperties.put("/" + mListId + "/" + Constants.FIREBASE_PROPERTY_TIMESTAMP_LAST_CHANGED, changedTimestampMap);
 
                 //update
                 shoppingListRef.updateChildren(updatedProperties);

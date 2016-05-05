@@ -1,14 +1,17 @@
 package com.udacity.firebase.shoppinglistplusplus.ui.activeListDetails;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
@@ -18,6 +21,7 @@ import com.firebase.client.ValueEventListener;
 import com.udacity.firebase.shoppinglistplusplus.R;
 import com.udacity.firebase.shoppinglistplusplus.model.ShoppingList;
 import com.udacity.firebase.shoppinglistplusplus.model.ShoppingListItem;
+import com.udacity.firebase.shoppinglistplusplus.model.User;
 import com.udacity.firebase.shoppinglistplusplus.ui.BaseActivity;
 import com.udacity.firebase.shoppinglistplusplus.utils.Constants;
 import com.udacity.firebase.shoppinglistplusplus.utils.Utils;
@@ -31,13 +35,18 @@ import java.util.HashMap;
 public class ActiveListDetailsActivity extends BaseActivity {
     private static final String LOG_TAG = ActiveListDetailsActivity.class.getSimpleName();
     private ListView mListView;
-    private Firebase mActiveListRef;
+    private Firebase mActiveListRef, mCurrentUserRef;
     private String mListId;
     private ActiveListItemAdapter mActiveListItemAdapter;
     //stores whether the curent user is owner
     private boolean mCurrentUserIsOwner = false;
     private ShoppingList mShoppingList;
-    private ValueEventListener mActiveListRefListener;
+    private ValueEventListener mActiveListRefListener, mCurrentUserRefListener;
+    private Button mButtonShopping;
+    private User mCurrentUser;
+    //stores whether current user is shopping
+    private boolean mShopping = false;
+
 
 
     @Override
@@ -55,6 +64,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
 
         //Create Firebase reference
         mActiveListRef = new Firebase(Constants.FIREBASE_URL_ACTIVE_LISTS).child(mListId);
+        mCurrentUserRef = new Firebase(Constants.FIREBASE_URL_USERS).child(mEncodedEmail);
         Firebase listItemsRef = new Firebase(Constants.FIREBASE_URL_SHOPPING_LIST_ITEMS).child(mListId);
         /**
          * Link layout elements from XML and setup the toolbar
@@ -72,6 +82,23 @@ public class ActiveListDetailsActivity extends BaseActivity {
         //Add valueEventListeners to Firebase references to control get data and control
         //behavior and visibility of elements
 
+        //save the most up to date version of current user in mCurrentUser
+        mCurrentUserRefListener = mCurrentUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User currentUser = dataSnapshot.getValue(User.class);
+                if(currentUser != null) mCurrentUser = currentUser;
+                else finish();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e(LOG_TAG, getString(R.string.log_error_the_read_failed) + firebaseError.getMessage());
+            }
+        });
+
+        final Activity thisActivity = this;
+
         //save the most recent version of current shopping list into mShoppingList instance
         //variable and update the UI to match the current list
         mActiveListRefListener = mActiveListRef.addValueEventListener(new ValueEventListener() {
@@ -79,7 +106,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //save most recent version of current shopping list into mShoppingList if present
                 //finsh() the activity if the list is null
-                //while current user is in th elist details activity
+                //while current user is in the list details activity
 
                 ShoppingList shoppingList = dataSnapshot.getValue(ShoppingList.class);
 
@@ -102,6 +129,18 @@ public class ActiveListDetailsActivity extends BaseActivity {
                 invalidateOptionsMenu();
 
                 setTitle(shoppingList.getListName());
+
+                HashMap<String, User> usersShopping = mShoppingList.getUsersShopping();
+                if(usersShopping != null && usersShopping.size() != 0 && usersShopping.containsKey(mEncodedEmail)) {
+                    mShopping = true;
+                    mButtonShopping.setText(getString(R.string.button_stop_shopping));
+                    mButtonShopping.setBackgroundColor(ContextCompat.getColor(ActiveListDetailsActivity.this, R.color.dark_grey));
+                }
+                else{
+                    mButtonShopping.setText(getString(R.string.button_start_shopping));
+                    mButtonShopping.setBackgroundColor(ContextCompat.getColor(ActiveListDetailsActivity.this, R.color.primary_dark));
+                    mShopping = false;
+                }
             }
 
 
@@ -146,15 +185,15 @@ public class ActiveListDetailsActivity extends BaseActivity {
                     String itemId = mActiveListItemAdapter.getRef(position).getKey();
 
                     if(selectedListItem != null) {
-                        //create map and fill it in with deep path multi write operation list
-                        HashMap<String, Object> updatedItemBoughtData = new HashMap<String, Object>();
+                        if (mShopping){
+                            //create map and fill it in with deep path multi write operation list
+                            HashMap<String, Object> updatedItemBoughtData = new HashMap<String, Object>();
 
                         //Buy selected item if it is not already bought
-                        if(!selectedListItem.isBought()) {
+                        if (!selectedListItem.isBought()) {
                             updatedItemBoughtData.put(Constants.FIREBASE_PROPERTY_BOUGHT, true);
                             updatedItemBoughtData.put(Constants.FIREBASE_PROPERTY_BOUGHT_BY, mEncodedEmail);
-                        }
-                        else {
+                        } else {
                             updatedItemBoughtData.put(Constants.FIREBASE_PROPERTY_BOUGHT, false);
                             updatedItemBoughtData.put(Constants.FIREBASE_PROPERTY_BOUGHT_BY, null);
                         }
@@ -164,11 +203,12 @@ public class ActiveListDetailsActivity extends BaseActivity {
                         firebaseItemLocation.updateChildren(updatedItemBoughtData, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                if(firebaseError != null) {
+                                if (firebaseError != null) {
                                     Log.d(LOG_TAG, getString(R.string.log_error_updating_data) + firebaseError.getMessage());
                                 }
                             }
                         });
+                    }
                     }
                 }
             }
@@ -249,6 +289,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
         super.onDestroy();
         mActiveListRef.removeEventListener(mActiveListRefListener);
         mActiveListItemAdapter.cleanup();
+        mCurrentUserRef.removeEventListener(mCurrentUserRefListener);
     }
 
     /**
@@ -256,6 +297,7 @@ public class ActiveListDetailsActivity extends BaseActivity {
      */
     private void initializeScreen() {
         mListView = (ListView) findViewById(R.id.list_view_shopping_list_items);
+        mButtonShopping = (Button) findViewById(R.id.button_shopping);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
 
         /* Common toolbar setup */
@@ -348,6 +390,16 @@ public class ActiveListDetailsActivity extends BaseActivity {
      * This method is called when user taps "Start/Stop shopping" button
      */
     public void toggleShopping(View view) {
-
+        //If current user is already shopping, remove current user from usersShoppingMap
+        Firebase usersShoppingRef = new Firebase(Constants.FIREBASE_URL_ACTIVE_LISTS)
+                .child(mListId).child(Constants.FIREBASE_PROPERTY_USERS_SHOPPING)
+                .child(mEncodedEmail);
+        //Either add or remove the current user from the usersShopping map
+        if(mShopping) {
+            usersShoppingRef.removeValue();
+        }
+        else {
+            usersShoppingRef.setValue(mCurrentUser);
+        }
     }
 }

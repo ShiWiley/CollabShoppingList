@@ -27,6 +27,7 @@ public final class Constants {
     public static final String FIREBASE_PROPERTY_USER_HAS_LOGGED_IN_WITH_PASSWORD = "hasLoggedInWithPassword";
     public static final String FIREBASE_PROPERTY_BOUGHT = "bought";
     public static final String FIREBASE_PROPERTY_BOUGHT_BY = "boughtBy";
+    public static final String FIREBASE_PROPERTY_USERS_SHOPPING = "usersShopping";
 
 
 
